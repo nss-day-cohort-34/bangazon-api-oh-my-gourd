@@ -22,7 +22,7 @@ The only restriction on the API is that only requests from the `www.bangazon.com
 
 ## Plan
 
-First, you need to plan. Your team needs to come to a consensus about the Bangazon ERD design. Once you feel you have consensus, you must get it approved by your manager before you begin writing code for the API.
+First, you need to plan. Your team needs to use the official SQL script (see below) and build a  Bangazon ERD using dbdiagram.io. Once your team agrees that the ERD is complete, you must get it approved by your manager before you begin writing code for the API.
 
 ## Modeling
 
