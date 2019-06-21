@@ -1,43 +1,16 @@
-DELETE FROM OrderProduct;
-DELETE FROM ComputerEmployee;
-DELETE FROM EmployeeTraining;
-DELETE FROM Employee;
-DELETE FROM TrainingProgram;
-DELETE FROM Computer;
-DELETE FROM Department;
-DELETE FROM [Order];
-DELETE FROM PaymentType;
-DELETE FROM Product;
-DELETE FROM ProductType;
-DELETE FROM Customer;
+USE MASTER
+GO
 
+IF NOT EXISTS (
+    SELECT [name]
+    FROM sys.databases
+    WHERE [name] = N'BangazonAPI'
+)
+CREATE DATABASE BangazonAPI
+GO
 
-ALTER TABLE Employee DROP CONSTRAINT [FK_EmployeeDepartment];
-ALTER TABLE ComputerEmployee DROP CONSTRAINT [FK_ComputerEmployee_Employee];
-ALTER TABLE ComputerEmployee DROP CONSTRAINT [FK_ComputerEmployee_Computer];
-ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_EmployeeTraining_Employee];
-ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_EmployeeTraining_Training];
-ALTER TABLE Product DROP CONSTRAINT [FK_Product_ProductType];
-ALTER TABLE Product DROP CONSTRAINT [FK_Product_Customer];
-ALTER TABLE PaymentType DROP CONSTRAINT [FK_PaymentType_Customer];
-ALTER TABLE [Order] DROP CONSTRAINT [FK_Order_Customer];
-ALTER TABLE [Order] DROP CONSTRAINT [FK_Order_Payment];
-ALTER TABLE OrderProduct DROP CONSTRAINT [FK_OrderProduct_Product];
-ALTER TABLE OrderProduct DROP CONSTRAINT [FK_OrderProduct_Order];
-
-
-DROP TABLE IF EXISTS OrderProduct;
-DROP TABLE IF EXISTS ComputerEmployee;
-DROP TABLE IF EXISTS EmployeeTraining;
-DROP TABLE IF EXISTS Employee;
-DROP TABLE IF EXISTS TrainingProgram;
-DROP TABLE IF EXISTS Computer;
-DROP TABLE IF EXISTS Department;
-DROP TABLE IF EXISTS [Order];
-DROP TABLE IF EXISTS PaymentType;
-DROP TABLE IF EXISTS Product;
-DROP TABLE IF EXISTS ProductType;
-DROP TABLE IF EXISTS Customer;
+USE BangazonAPI
+GO
 
 
 CREATE TABLE Department (
