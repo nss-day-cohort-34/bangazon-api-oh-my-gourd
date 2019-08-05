@@ -167,6 +167,7 @@ namespace BangazonAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            
         }
 
         private bool CustomerExists(int id)
