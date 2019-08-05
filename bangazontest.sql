@@ -84,7 +84,9 @@ CREATE TABLE ProductType (
 CREATE TABLE Customer (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	FirstName VARCHAR(55) NOT NULL,
-	LastName VARCHAR(55) NOT NULL
+	LastName VARCHAR(55) NOT NULL,
+	CreationDate DATETIME NOT NULL,
+	LastActiveDate DATETIME NOT NULL
 );
 
 CREATE TABLE Product (
@@ -168,10 +170,10 @@ INSERT INTO ProductType ([Name]) VALUES ('Electronics');
 INSERT INTO ProductType ([Name]) VALUES ('Apparel');
 
 -- Customer Data
-INSERT INTO Customer (FirstName, LastName) VALUES ('Inès', 'Northeast');
-INSERT INTO Customer (FirstName, LastName) VALUES ('Liè', 'Dible');
-INSERT INTO Customer (FirstName, LastName) VALUES ('Laurène', 'Hollyman');
-INSERT INTO Customer (FirstName, LastName) VALUES ('Maëlle', 'Overill');
+INSERT INTO Customer (FirstName, LastName, CreationDate, LastActiveDate) VALUES ('Inès', 'Northeast', '2/4/2013', '10/15/2016');
+INSERT INTO Customer (FirstName, LastName, CreationDate, LastActiveDate) VALUES ('Liè', 'Dible', '1/14/2014', '11/11/2018');
+INSERT INTO Customer (FirstName, LastName, CreationDate, LastActiveDate) VALUES ('Laurène', 'Hollyman', '3/19/2019', '8/5/2019');
+INSERT INTO Customer (FirstName, LastName, CreationDate, LastActiveDate) VALUES ('Maëlle', 'Overill', '6/23/2015', '8/10/2016');
 
 -- Product Data
 INSERT INTO Product (ProductTypeId, CustomerId, Price, Title, [Description], Quantity) VALUES (1, 2, '$0.61', 'Honey - Liquid', 'ligula suspendisse ornare consequat lectus in est', 25);
