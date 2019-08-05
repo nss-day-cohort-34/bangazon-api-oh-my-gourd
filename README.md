@@ -38,4 +38,4 @@ Now it's time to build the controllers that handle GET, POST, PUT, and DELETE op
 
 ## Test Classes
 
-Each feature ticket your team will work on for this sprint has testing requirements. This boilerplate solution has a testing project includes with some starter code. You must make sure that all tests pass before you submit a PR.
+Each feature ticket your team will work on for this sprint has testing requirements. This boilerplate solution has a testing project includes with some starter code. You must make sure that all tests pass before you submit a PR. Run the script found [here](./bangazontest.sql) to create a test database. Your tests will be run against this database so that your normal database is not altered by running your tests. Get together with your team and add some test data to this database. This should be done by adding `INSERT` statements to the bottom of the `./bangazontest.sql` file.
