@@ -1,6 +1,5 @@
-using System;
 using System.Net;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Xunit;
 using BangazonAPI.Models;
 using System.Threading.Tasks;
@@ -27,7 +26,7 @@ namespace TestBangazonAPI
 
 
                 string responseBody = await response.Content.ReadAsStringAsync();
-                var customers = JsonConvert.DeserializeObject<List<Customer>>(responseBody);
+                var customers = JsonSerializer.Deserialize<List<Customer>>(responseBody);
 
                 /*
                     ASSERT
