@@ -30,7 +30,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        // GET api/values
+        // GET api/customers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -63,7 +63,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        // GET api/values/5
+        // GET api/customers/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -95,7 +95,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        // POST api/values
+        // POST api/customers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Customer customer)
         {
@@ -119,7 +119,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        // PUT api/values/5
+        // PUT api/customers/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Customer customer)
         {
@@ -163,11 +163,11 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        // DELETE api/values/5
+        // DELETE api/customers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            
+            throw new NotImplementedException("This method isn't implemented...yet.");
         }
 
         private bool CustomerExists(int id)
@@ -177,7 +177,6 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    // More string interpolation
                     cmd.CommandText = "SELECT Id FROM Customer WHERE Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
