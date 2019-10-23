@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using BangazonAPI;
 using System.Net.Http;
 using Xunit;
+using Microsoft.Extensions.Configuration;
 
 namespace TestBangazonAPI
 {
@@ -9,7 +10,18 @@ namespace TestBangazonAPI
     {
         public HttpClient Client { get; private set; }
         private readonly WebApplicationFactory<Startup> _factory =
-            new WebApplicationFactory<Startup>();
+            new WebApplicationFactory<Startup>()
+                .WithWebHostBuilder(builder =>
+                {
+                    builder.ConfigureAppConfiguration((webbuilder, configbuilder) =>
+                    {
+                        configbuilder
+                            .SetBasePath(webbuilder.HostingEnvironment.ContentRootPath)
+                            .AddJsonFile("appsettings.Testing.json")
+                            .AddEnvironmentVariables();
+                        configbuilder.Build();
+                    });
+                });
 
         public APIClientProvider()
         {
