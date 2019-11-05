@@ -26,19 +26,19 @@ DROP TABLE IF EXISTS Employee;
 DROP TABLE IF EXISTS Department;
 
 
-CREATE TABLE Department (
-	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
-	[Name] VARCHAR(55) NOT NULL,
-	Budget 	INTEGER NOT NULL
-);
-
 CREATE TABLE Employee (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	FirstName VARCHAR(55) NOT NULL,
 	LastName VARCHAR(55) NOT NULL,
 	DepartmentId INTEGER NOT NULL,
-	IsSuperVisor BIT NOT NULL DEFAULT(0),
-    CONSTRAINT FK_EmployeeDepartment FOREIGN KEY(DepartmentId) REFERENCES Department(Id)
+);
+
+CREATE TABLE Department (
+	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
+	[Name] VARCHAR(55) NOT NULL,
+	Budget 	INTEGER NOT NULL,
+	SupervisorId INTEGER NOT NULL,
+	CONSTRAINT FK_DepartmentSupervisor_Employee FOREIGN KEY(SupervisorId) REFERENCES Employee(Id)
 );
 
 CREATE TABLE Computer (
@@ -46,7 +46,10 @@ CREATE TABLE Computer (
 	PurchaseDate DATETIME NOT NULL,
 	DecomissionDate DATETIME,
 	Make VARCHAR(55) NOT NULL,
-	Manufacturer VARCHAR(55) NOT NULL
+	Manufacturer VARCHAR(55) NOT NULL,
+	EmployeeId INTEGER,
+	IsWorking BIT NOT NULL,
+	CONSTRAINT FK_Computer_Employee FOREIGN KEY(EmployeeId) REFERENCES Employee(Id)
 );
 
 CREATE TABLE ComputerEmployee (
@@ -92,13 +95,13 @@ CREATE TABLE Customer (
 CREATE TABLE Product (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	ProductTypeId INTEGER NOT NULL,
-	CustomerId INTEGER NOT NULL,
+	SellerId INTEGER NOT NULL,
 	Price MONEY NOT NULL,
 	Title VARCHAR(255) NOT NULL,
 	[Description] VARCHAR(255) NOT NULL,
 	Quantity INTEGER NOT NULL,
     CONSTRAINT FK_Product_ProductType FOREIGN KEY(ProductTypeId) REFERENCES ProductType(Id),
-    CONSTRAINT FK_Product_Customer FOREIGN KEY(CustomerId) REFERENCES Customer(Id)
+    CONSTRAINT FK_Product_Customer FOREIGN KEY(SellerId) REFERENCES Customer(Id)
 );
 
 
@@ -114,6 +117,8 @@ CREATE TABLE [Order] (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	CustomerId INTEGER NOT NULL,
 	PaymentTypeId INTEGER,
+	Total INTEGER NOT NULL,
+	IsCompleted BIT NOT NULL,
     CONSTRAINT FK_Order_Customer FOREIGN KEY(CustomerId) REFERENCES Customer(Id),
     CONSTRAINT FK_Order_Payment FOREIGN KEY(PaymentTypeId) REFERENCES PaymentType(Id)
 );
@@ -125,5 +130,3 @@ CREATE TABLE OrderProduct (
     CONSTRAINT FK_OrderProduct_Product FOREIGN KEY(ProductId) REFERENCES Product(Id),
     CONSTRAINT FK_OrderProduct_Order FOREIGN KEY(OrderId) REFERENCES [Order](Id)
 );
-
-
