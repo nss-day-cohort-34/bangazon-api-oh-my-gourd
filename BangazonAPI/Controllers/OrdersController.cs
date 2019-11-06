@@ -111,10 +111,39 @@ namespace BangazonAPI.Controllers
 
                         return Ok(orders.Values);
                     }
-                    //else if (_include == "customers")
-                    //{
+                    else if (_include == "customers")
+                    {
+                        cmd.CommandText = @"SELECT o.Id AS OrderId, o.CustomerId, o.PaymentTypeId, o.Total, o.IsCompleted, 
+                                            c.Id AS CustomerId, c.FirstName, c.LastName, c.CreationDate, c.LastActiveDate
+                                            FROM [Order] o
+                                            LEFT JOIN Customer c on c.Id = o.CustomerId";
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
-                    //}
+                        List<Order> orders = new List<Order>();
+                        while (reader.Read())
+                        {
+                            Order order = new Order()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("OrderId")),
+                                CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
+                                PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId")),
+                                Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
+                                IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted")),
+                                Customer = new Customer()
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("CustomerId")),
+                                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                    LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                    CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
+                                    LastActiveDate = reader.GetDateTime(reader.GetOrdinal("LastActiveDate"))
+                                }
+                            };
+                            orders.Add(order);
+                        }
+                        reader.Close();
+
+                        return Ok(orders);
+                    }
                     else
                     {
                         cmd.CommandText = @"SELECT Id, CustomerId, PaymentTypeId, Total, IsCompleted
