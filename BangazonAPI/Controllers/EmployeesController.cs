@@ -100,11 +100,11 @@ namespace BangazonAPI.Controllers
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
-                    List<Employee> employees = new List<Employee>();
+                    Employee employee = null;
 
                     if (reader.Read())
                     {
-                        Employee employee = new Employee
+                        employee = new Employee
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("TheEmployeeId")),
                             FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
@@ -126,11 +126,10 @@ namespace BangazonAPI.Controllers
                             };
                         }
 
-                        employees.Add(employee);
                     }
                     reader.Close();
 
-                    return Ok(employees);
+                    return Ok(employee);
                 }
             }
         }

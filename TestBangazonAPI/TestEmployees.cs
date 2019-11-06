@@ -49,12 +49,11 @@ namespace TestBangazonAPI
                 var response = await client.GetAsync("/api/employees/1");
 
                 string responseBody = await response.Content.ReadAsStringAsync();
-                List<Employee> employees = JsonConvert.DeserializeObject<List<Employee>>(responseBody);
+                var employee = JsonConvert.DeserializeObject<Employee>(responseBody);
               
                 // ASSERT
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                Assert.True(employees[0].Id == 1);
-                Assert.True(employees.Count == 1);
+                Assert.True(employee.Id == 1);
             }
         }
 
@@ -85,6 +84,54 @@ namespace TestBangazonAPI
                 Assert.True(employee.FirstName == "Bill");
             }
         }
+
+        [Fact]
+        public async Task Test_Modify_Employee()
+        {
+            using (var client = new APIClientProvider().Client)
+            {
+                /*
+                    PUT section
+                */
+                Random random = new Random();
+                int randomNum = random.Next(0, 100);
+                string newFirstName = $"Andy {randomNum.ToString()}";
+                Employee modifiedEmployee = new Employee()
+                {
+                    FirstName = newFirstName,
+                    LastName = "Collins",
+                    DepartmentId = 4
+                };
+                var employeeAsJSON = JsonConvert.SerializeObject(modifiedEmployee);
+
+                var response = await client.PutAsync(
+                    "/api/employees/1",
+                    new StringContent(employeeAsJSON, Encoding.UTF8, "application/json"));
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+                /*
+                    GET section
+                    Verify that the PUT operation was successful
+                */
+
+                var getEmployee = await client.GetAsync("/api/employees/1");
+                getEmployee.EnsureSuccessStatusCode();
+
+                string getEmployeeBody = await getEmployee.Content.ReadAsStringAsync();
+                var newEmployee = JsonConvert.DeserializeObject<Employee>(getEmployeeBody);
+
+
+                Assert.Equal(HttpStatusCode.OK, getEmployee.StatusCode);
+                Assert.Equal(newFirstName, newEmployee.FirstName);
+            }
+        }
+
+
+
+
 
 
     }
