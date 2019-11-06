@@ -33,7 +33,7 @@ namespace BangazonAPI.Controllers
 
         // GET api/customers
         [HttpGet]
-        public async Task<IActionResult> Get(string _include)
+        public async Task<IActionResult> Get(string _include, string q)
         {
             using (SqlConnection conn = Connection)
             {
@@ -124,6 +124,30 @@ namespace BangazonAPI.Controllers
 
                         reader.Close();
                         return Ok(customers.Values);
+                    }
+                    else if (q != null)
+                    {
+                        cmd.CommandText = @"SELECT Id, FirstName, LastName, CreationDate, LastActiveDate FROM Customer
+                                            WHERE FirstName LIKE @searchString OR LastName LIKE @searchString";
+                        cmd.Parameters.Add(new SqlParameter("@searchString", "%" + q + "%"));
+                        SqlDataReader reader = cmd.ExecuteReader();
+
+                        List<Customer> customers = new List<Customer>();
+                        while (reader.Read())
+                        {
+                            Customer customer = new Customer()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
+                                LastActiveDate = reader.GetDateTime(reader.GetOrdinal("LastActiveDate"))
+                            };
+                            customers.Add(customer);
+                        }
+                        reader.Close();
+
+                        return Ok(customers);
                     }
                     else
                     {
