@@ -39,50 +39,46 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    if (_include == "products")
+                    if (_include == "employees")
                     {
-                        cmd.CommandText = @"SELECT c.Id, c.FirstName, c.LastName, c.CreationDate, c.LastActiveDate, p.Id AS ProductId, p.SellerId, p.Title, p.Description, p.Price, p.Quantity, p.ProductTypeId 
-                                        FROM Customer c LEFT JOIN Product p 
-                                        ON p.SellerId = c.Id";
+                        cmd.CommandText = @"SELECT d.Id AS TheDepartmentId, d.Name, d.Budget, d.SupervisorId, e.Id AS EmployeeId, e.FirstName, e.LastName, e.DepartmentId
+                                        FROM Department d LEFT JOIN Employee e 
+                                        ON d.Id = e.DepartmentId";
                         SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
-                        Dictionary<int, Customer> customers = new Dictionary<int, Customer>();
+                        Dictionary<int, Department> departments = new Dictionary<int, Department>();
                         while (reader.Read())
                         {
-                            int customerId = reader.GetInt32(reader.GetOrdinal("Id"));
-                            if (!customers.ContainsKey(customerId))
+                            int departmentId = reader.GetInt32(reader.GetOrdinal("TheDepartmentId"));
+                            if (!departments.ContainsKey(departmentId))
                             {
-                                Customer customer = new Customer
+                                Department department = new Department
                                 {
-                                    Id = customerId,
+                                    Id = departmentId,
+                                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                                    Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
+                                    SupervisorId = reader.GetInt32(reader.GetOrdinal("SupervisorId"))
+                                };
+                                departments.Add(departmentId, department);
+                            }
+                            if (!reader.IsDBNull(reader.GetOrdinal("DepartmentId")))
+                            {
+                                int employeeId = reader.GetInt32(reader.GetOrdinal("EmployeeId"));
+                                Employee employee = new Employee()
+                                {
+                                    Id = employeeId,
                                     FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                                     LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                                    CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
-                                    LastActiveDate = reader.GetDateTime(reader.GetOrdinal("LastActiveDate"))
+                                    DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId"))
                                 };
-                                customers.Add(customerId, customer);
-                            }
-                            if (!reader.IsDBNull(reader.GetOrdinal("ProductId")))
-                            {
-                                int productId = reader.GetInt32(reader.GetOrdinal("ProductId"));
-                                Product product = new Product()
-                                {
-                                    Id = productId,
-                                    Title = reader.GetString(reader.GetOrdinal("Title")),
-                                    Description = reader.GetString(reader.GetOrdinal("Description")),
-                                    SellerId = reader.GetInt32(reader.GetOrdinal("SellerId")),
-                                    ProductTypeId = reader.GetInt32(reader.GetOrdinal("ProductTypeId")),
-                                    Price = (double)reader.GetDecimal(reader.GetOrdinal("Price")),
-                                    Quantity = reader.GetInt32(reader.GetOrdinal("Quantity"))
-                                };
-                                customers[customerId].Products.Add(product);
+                                departments[departmentId].Employees.Add(employee);
                             }
 
                         }
 
                         reader.Close();
 
-                        return Ok(customers.Values);
+                        return Ok(departments.Values);
                     }
                     else
                     {
