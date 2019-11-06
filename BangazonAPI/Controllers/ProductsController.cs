@@ -29,7 +29,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        // GET api/customers
+        // GET api/products
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -67,7 +67,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //GET api/customers/5
+        //GET api/products/5
         [HttpGet("{id}", Name = "GetProduct")]
         public async Task<IActionResult> Get(int id)
         {
@@ -103,7 +103,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        // POST api/customers
+        // POST api/products
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Product product)
         {
@@ -132,7 +132,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        // PUT api/customers/5
+        // PUT api/products/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Product product)
         {
@@ -176,6 +176,44 @@ namespace BangazonAPI.Controllers
                 else
                 {
                     throw;
+                }
+            }
+        }
+
+        // DELETE api/products/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT op.ProductId FROM  OrderProduct op WHERE op.ProductId = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                    if (reader.Read())
+                    {
+                        reader.Close();
+                        return new ContentResult() { Content = @"Error 418: I'm a teapot.             
+                                                                        ;,'
+                                                                 _o_    ;:; '
+                                                             ,-.'---`.__ ;
+                                                            ((j`===== ',-'
+                                                             `-\     /
+                                                                `-= -'     ", StatusCode = 418 };
+                    }
+                    else
+                    {
+                        reader.Close();
+                        cmd.CommandText = @"DELETE FROM Product
+                                        WHERE id = @id
+                                       ";
+                        cmd.ExecuteNonQuery();
+                        return Ok($"Deleted item at index {id}");
+                    }
+
                 }
             }
         }
