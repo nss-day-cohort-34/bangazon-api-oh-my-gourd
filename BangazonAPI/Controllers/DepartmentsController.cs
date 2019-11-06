@@ -112,5 +112,38 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
+
+        //GET api/departments/5
+        [HttpGet("{id}", Name = "GetDepartment")]
+        public async Task<IActionResult> Get(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT Id, Name, Budget, SupervisorId
+                                        FROM Department WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                    Department department = null;
+                    if (reader.Read())
+                    {
+                        department = new Department
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
+                            SupervisorId = reader.GetInt32(reader.GetOrdinal("SupervisorId"))
+                        };
+                    }
+
+                    reader.Close();
+
+                    return Ok(department);
+                }
+            }
+        }
     }
 }
