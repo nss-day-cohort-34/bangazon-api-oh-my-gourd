@@ -64,7 +64,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        // GET api/paymentTypes
+        // GET api/paymentTypes/1
         [HttpGet("{id}", Name = "GetPaymentType")]
         public async Task<IActionResult> Get(int id)
         {
