@@ -87,7 +87,43 @@ namespace BangazonAPI.Controllers
                     }
                     else if (_include == "payments")
                     {
-                        return Ok();
+                        cmd.CommandText = @"SELECT c.Id, c.FirstName, c.LastName, c.CreationDate, c.LastActiveDate, p.Id AS PaymentTypeId, p.Name, p.AcctNumber, p.CustomerId
+                                        FROM Customer c LEFT JOIN PaymentType p 
+                                        ON p.CustomerId = c.Id";
+                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                        Dictionary<int, Customer> customers = new Dictionary<int, Customer>();
+                        while (reader.Read())
+                        {
+                            int customerId = reader.GetInt32(reader.GetOrdinal("Id"));
+                            if (!customers.ContainsKey(customerId))
+                            {
+                                Customer customer = new Customer
+                                {
+                                    Id = customerId,
+                                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                    LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                    CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
+                                    LastActiveDate = reader.GetDateTime(reader.GetOrdinal("LastActiveDate"))
+                                };
+                                customers.Add(customerId, customer);
+                            }
+                            if (!reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")))
+                            {
+                                int paymentId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId"));
+                                PaymentType paymentType = new PaymentType()
+                                {
+                                    Id = paymentId,
+                                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                                    AccountNumber = reader.GetString(reader.GetOrdinal("AcctNumber")),
+                                };
+                                customers[customerId].PaymentTypes.Add(paymentType);
+                            }
+
+                        }
+
+                        reader.Close();
+                        return Ok(customers.Values);
                     }
                     else
                     {
@@ -246,7 +282,13 @@ namespace BangazonAPI.Controllers
                     if (reader.Read())
                     {
                         reader.Close();
-                        return new ContentResult() { Content = "Error 418: I'm a teapot.", StatusCode = 418 };
+                        return new ContentResult() { Content = @"Error 418: I'm a teapot.             
+                                                                        ;,'
+                                                                 _o_    ;:; '
+                                                             ,-.'---`.__ ;
+                                                            ((j`===== ',-'
+                                                             `-\     /
+                                                                `-= -'     ", StatusCode = 418 };
                     }
                     else
                     {
