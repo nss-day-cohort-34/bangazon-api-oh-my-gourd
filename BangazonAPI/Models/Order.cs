@@ -10,7 +10,7 @@ namespace BangazonAPI.Models
     {
         public int Id { get; set; }
         [Required]
-        public decimal Total { get; set; }
+        public double Total { get; set; }
         [Required]
         public bool IsCompleted { get; set; }
         [Required]
