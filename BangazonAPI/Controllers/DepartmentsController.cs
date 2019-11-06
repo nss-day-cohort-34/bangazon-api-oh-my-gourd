@@ -32,7 +32,7 @@ namespace BangazonAPI.Controllers
 
         // GET api/departments
         [HttpGet]
-        public async Task<IActionResult> Get(string _include)
+        public async Task<IActionResult> Get(string _include, string _filter, int _gt, int _lt)
         {
             using (SqlConnection conn = Connection)
             {
@@ -79,6 +79,62 @@ namespace BangazonAPI.Controllers
                         reader.Close();
 
                         return Ok(departments.Values);
+                    }
+                    else if (_filter == "budget")
+                    {
+                        if (_gt > 0)
+                        {
+                            cmd.CommandText = @"SELECT Id, Name, Budget, SupervisorId
+                                            FROM Department
+                                            WHERE Budget >= @minimum ";
+                            cmd.Parameters.Add(new SqlParameter("@minimum", _gt));
+                            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                            List<Department> departments = new List<Department>();
+                            while (reader.Read())
+                            {
+                                Department department = new Department
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                                    Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
+                                    SupervisorId = reader.GetInt32(reader.GetOrdinal("SupervisorId"))
+                                };
+
+                                departments.Add(department);
+                            }
+
+                            reader.Close();
+
+                            return Ok(departments);
+                        }
+                        else if (_lt > 0)
+                        {
+                            cmd.CommandText = @"SELECT Id, Name, Budget, SupervisorId
+                                            FROM Department
+                                            WHERE Budget <= @maximum ";
+                            cmd.Parameters.Add(new SqlParameter("@maximum", _lt));
+                            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+                            List<Department> departments = new List<Department>();
+                            while (reader.Read())
+                            {
+                                Department department = new Department
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                                    Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
+                                    SupervisorId = reader.GetInt32(reader.GetOrdinal("SupervisorId"))
+                                };
+
+                                departments.Add(department);
+                            }
+
+                            reader.Close();
+
+                            return Ok(departments);
+                        }
+                        return NotFound();
                     }
                     else
                     {
