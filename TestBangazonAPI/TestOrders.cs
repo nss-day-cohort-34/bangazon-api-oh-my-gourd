@@ -195,8 +195,7 @@ namespace TestBangazonAPI
                 {
                     CustomerId = 3,
                     PaymentTypeId = newPaymentTypeId,
-                    IsCompleted = false,
-                    Total = 200
+                    IsCompleted = false
                 };
                 var orderAsJSON = JsonConvert.SerializeObject(modifiedOrder);
 
