@@ -65,6 +65,30 @@ namespace TestBangazonAPI
         }
 
         [Fact]
+        public async Task Test_Get_Inactive_Customers()
+        {
+            using (var client = new APIClientProvider().Client)
+            {
+                // ARRANGE
+
+                // ACT
+                var response = await client.GetAsync("/api/customers?_active=false");
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                List<Customer> customers = new List<Customer>();
+                if (responseBody != "All customers have placed orders.")
+                {
+                    customers = JsonConvert.DeserializeObject<List<Customer>>(responseBody);
+                    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                }
+
+                // ASSERT
+                Assert.True(customers.Count > 0 || responseBody == "All customers have placed orders.");
+            }
+        }
+
+        [Fact]
         public async Task Test_Get_All_Customers_And_Payments()
         {
             using (var client = new APIClientProvider().Client)
