@@ -83,7 +83,7 @@ namespace BangazonAPI.Controllers
                                 {
                                     Id = orderId,
                                     CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                                    PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId")),
+                                    PaymentTypeId = !reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")) ? reader.GetInt32(reader.GetOrdinal("PaymentTypeId")) : -1,
                                     Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
                                     IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted"))
                                 };
@@ -198,7 +198,7 @@ namespace BangazonAPI.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                            PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId")),
+                            PaymentTypeId = !reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")) ? reader.GetInt32(reader.GetOrdinal("PaymentTypeId")) : -1,
                             Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
                             IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted"))
                         };
