@@ -1,0 +1,1 @@
+﻿SELECT p.Id FROM  Product p WHERE p.ProductTypeId = 1
