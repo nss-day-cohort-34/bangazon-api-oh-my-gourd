@@ -51,9 +51,9 @@ namespace BangazonAPI.Controllers
                         {
                             Order order = new Order()
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("OrderId")),
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                                PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId")),
+                                PaymentTypeId = !reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")) ? reader.GetInt32(reader.GetOrdinal("PaymentTypeId")) : -1,
                                 Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
                                 IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted"))
                             };
@@ -126,7 +126,7 @@ namespace BangazonAPI.Controllers
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("OrderId")),
                                 CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                                PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId")),
+                                PaymentTypeId = !reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")) ? reader.GetInt32(reader.GetOrdinal("PaymentTypeId")) : -1,
                                 Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
                                 IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted")),
                                 Customer = new Customer()
@@ -157,7 +157,7 @@ namespace BangazonAPI.Controllers
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                                PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId")),
+                                PaymentTypeId = !reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")) ? reader.GetInt32(reader.GetOrdinal("PaymentTypeId")) : -1,
                                 Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
                                 IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted"))
                             };
@@ -327,25 +327,27 @@ namespace BangazonAPI.Controllers
         }
 
         [HttpPost("AddProductToOrder")]
-        public async Task<IActionResult> AddProductToOrder(CustomerProduct customerProduct)
+        public async Task<IActionResult> AddProductToOrder([FromBody] CustomerProduct customerProduct)
         {
-            // This method could be improved with login authentication. Would not need CustomerId as a parameter
 
-            // call private method that determines whether the customer has an open order - return orderId 
+            // call method that determines whether the customer has an open order - return orderId 
             int orderId = GetCurrentCustomerOrderId(customerProduct.CustomerId);
             if (orderId > 0)
             {
-            // if orderId exists, then post to OrderProduct
-
+                // if orderId exists, post to OrderProduct table
+                await PostOrderProduct(orderId, customerProduct.ProductId);
                 return Ok();
             }
             else
             {
-            // if orderId is null, then create order and post to OrderProduct
+                // if orderId is null, then create an order and post to OrderProduct
+                await PostOrder(customerProduct.CustomerId);
+                int newOrderId = GetCurrentCustomerOrderId(customerProduct.CustomerId);
+                await PostOrderProduct(newOrderId, customerProduct.ProductId);
                 return Ok();
             }
         }
-
+          
         private int GetCurrentCustomerOrderId(int customerId)
         {
             using (SqlConnection conn = Connection)
@@ -365,8 +367,63 @@ namespace BangazonAPI.Controllers
                        orderId = reader.GetInt32(reader.GetOrdinal("Id"));
                        return orderId;
                     }
-
+                    reader.Close();
                     return orderId;
+                }
+            }
+        }
+
+        private async Task<IActionResult> PostOrder(int customerId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    Order newOrder = new Order()
+                    {
+                        CustomerId = customerId,
+                        IsCompleted = false,
+                        Total = 0
+                    };
+
+                    cmd.CommandText = @"INSERT INTO [Order] (CustomerId, IsCompleted, Total)
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@customerId, @isCompleted, @total) 
+                                           ";
+                    cmd.Parameters.Add(new SqlParameter("@customerId", newOrder.CustomerId));
+                    cmd.Parameters.Add(new SqlParameter("@isCompleted", newOrder.IsCompleted));
+                    cmd.Parameters.Add(new SqlParameter("@total", newOrder.Total));
+
+                    newOrder.Id = (int)await cmd.ExecuteScalarAsync();
+
+                    return CreatedAtRoute("GetOrderProduct", new { id = newOrder.Id }, newOrder);
+                }
+            }
+        }
+        private async Task<IActionResult> PostOrderProduct(int orderId, int productId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    OrderProduct newOrderProduct = new OrderProduct()
+                    {
+                        OrderId = orderId,
+                        ProductId = productId
+                    };
+
+                    cmd.CommandText = @"INSERT INTO OrderProduct (OrderId, ProductId)
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@orderId, @productId) 
+                                           ";
+                    cmd.Parameters.Add(new SqlParameter("@orderId", newOrderProduct.OrderId));
+                    cmd.Parameters.Add(new SqlParameter("@productId", newOrderProduct.ProductId));
+
+                    newOrderProduct.Id = (int)await cmd.ExecuteScalarAsync();
+
+                    return CreatedAtRoute("GetOrderProduct", new { id = newOrderProduct.Id }, newOrderProduct);
                 }
             }
         }
