@@ -41,7 +41,7 @@ namespace BangazonAPI.Controllers
                 {
                     if (_include == "employees")
                     {
-                        cmd.CommandText = @"SELECT d.Id AS TheDepartmentId, d.Name, d.Budget, d.SupervisorId, e.Id AS EmployeeId, e.FirstName, e.LastName, e.DepartmentId
+                        cmd.CommandText = @"SELECT d.Id AS TheDepartmentId, d.Name, d.Budget, e.Id AS EmployeeId, e.FirstName, e.LastName, e.DepartmentId
                                         FROM Department d LEFT JOIN Employee e 
                                         ON d.Id = e.DepartmentId";
                         SqlDataReader reader = await cmd.ExecuteReaderAsync();
@@ -56,8 +56,7 @@ namespace BangazonAPI.Controllers
                                 {
                                     Id = departmentId,
                                     Name = reader.GetString(reader.GetOrdinal("Name")),
-                                    Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
-                                    SupervisorId = reader.GetInt32(reader.GetOrdinal("SupervisorId"))
+                                    Budget = reader.GetDecimal(reader.GetOrdinal("Budget"))
                                 };
                                 departments.Add(departmentId, department);
                             }
@@ -84,7 +83,7 @@ namespace BangazonAPI.Controllers
                     {
                         if (_gt > 0)
                         {
-                            cmd.CommandText = @"SELECT Id, Name, Budget, SupervisorId
+                            cmd.CommandText = @"SELECT Id, Name, Budget
                                             FROM Department
                                             WHERE Budget >= @minimum ";
                             cmd.Parameters.Add(new SqlParameter("@minimum", _gt));
@@ -97,8 +96,7 @@ namespace BangazonAPI.Controllers
                                 {
                                     Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                     Name = reader.GetString(reader.GetOrdinal("Name")),
-                                    Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
-                                    SupervisorId = reader.GetInt32(reader.GetOrdinal("SupervisorId"))
+                                    Budget = reader.GetDecimal(reader.GetOrdinal("Budget"))
                                 };
 
                                 departments.Add(department);
@@ -110,7 +108,7 @@ namespace BangazonAPI.Controllers
                         }
                         else if (_lt > 0)
                         {
-                            cmd.CommandText = @"SELECT Id, Name, Budget, SupervisorId
+                            cmd.CommandText = @"SELECT Id, Name, Budget
                                             FROM Department
                                             WHERE Budget <= @maximum ";
                             cmd.Parameters.Add(new SqlParameter("@maximum", _lt));
@@ -123,8 +121,7 @@ namespace BangazonAPI.Controllers
                                 {
                                     Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                     Name = reader.GetString(reader.GetOrdinal("Name")),
-                                    Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
-                                    SupervisorId = reader.GetInt32(reader.GetOrdinal("SupervisorId"))
+                                    Budget = reader.GetDecimal(reader.GetOrdinal("Budget"))
                                 };
 
                                 departments.Add(department);
@@ -138,7 +135,7 @@ namespace BangazonAPI.Controllers
                     }
                     else
                     {
-                        cmd.CommandText = @"SELECT Id, Name, Budget, SupervisorId
+                        cmd.CommandText = @"SELECT Id, Name, Budget
                                         FROM Department";
                         SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
@@ -149,8 +146,7 @@ namespace BangazonAPI.Controllers
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 Name = reader.GetString(reader.GetOrdinal("Name")),
-                                Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
-                                SupervisorId = reader.GetInt32(reader.GetOrdinal("SupervisorId"))
+                                Budget = reader.GetDecimal(reader.GetOrdinal("Budget"))
                             };
 
                             departments.Add(department);
@@ -174,7 +170,7 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id, Name, Budget, SupervisorId
+                    cmd.CommandText = @"SELECT Id, Name, Budget
                                         FROM Department WHERE Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = await cmd.ExecuteReaderAsync();
@@ -186,8 +182,7 @@ namespace BangazonAPI.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
-                            Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
-                            SupervisorId = reader.GetInt32(reader.GetOrdinal("SupervisorId"))
+                            Budget = reader.GetDecimal(reader.GetOrdinal("Budget"))
                         };
                     }
 
@@ -208,13 +203,12 @@ namespace BangazonAPI.Controllers
                 {
                     // More string interpolation
                     cmd.CommandText = @"
-                        INSERT INTO Department (Name, Budget, SupervisorId)
+                        INSERT INTO Department (Name, Budget)
                         OUTPUT INSERTED.Id
-                        VALUES (@name, @budget, @supervisorId)
+                        VALUES (@name, @budget)
                     ";
                     cmd.Parameters.Add(new SqlParameter("@name", department.Name));
                     cmd.Parameters.Add(new SqlParameter("@budget", department.Budget));
-                    cmd.Parameters.Add(new SqlParameter("@supervisorId", department.SupervisorId));
                     
 
                     department.Id = (int)await cmd.ExecuteScalarAsync();
@@ -236,13 +230,12 @@ namespace BangazonAPI.Controllers
                     {
                         cmd.CommandText = @"
                             UPDATE Department
-                            SET Name = @name, Budget = @budget, SupervisorId = @supervisorId
+                            SET Name = @name, Budget = @budget
                             WHERE Id = @id
                         ";
                         cmd.Parameters.Add(new SqlParameter("@id", id));
                         cmd.Parameters.Add(new SqlParameter("@name", department.Name));
                         cmd.Parameters.Add(new SqlParameter("@budget", department.Budget));
-                        cmd.Parameters.Add(new SqlParameter("@supervisorId", department.SupervisorId));
 
 
                         int rowsAffected = await cmd.ExecuteNonQueryAsync();
