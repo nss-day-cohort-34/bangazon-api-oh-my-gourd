@@ -31,14 +31,15 @@
 --INSERT INTO [dbo].[Product] ([ProductTypeId], [SellerId], [Price], [Title], [Description], [Quantity]) VALUES (1, 2, CAST(200.5500 AS Money), 'Trash Bags', 'Bags for your trash...', 50)
 --INSERT INTO [dbo].[Product] ([ProductTypeId], [SellerId], [Price], [Title], [Description], [Quantity]) VALUES (2, 3, CAST(1000.0000 AS Money), 'Samsung TV', 'It''s 4k!', 4)
 
---INSERT INTO [dbo].[Order] ([CustomerId], [PaymentTypeId], [Total], [IsCompleted]) VALUES (4, 1, CAST(200.0000 AS Money), 0)
---INSERT INTO [dbo].[Order] ([CustomerId], [PaymentTypeId], [Total], [IsCompleted]) VALUES (5, 2, CAST(1000.0000 AS Money), 1)
+--INSERT INTO [dbo].[Order] ([CustomerId], [PaymentTypeId], [Total], [IsCompleted]) VALUES (3, 2, CAST(200.0000 AS Money), 0)
+--INSERT INTO [dbo].[Order] ([CustomerId], [PaymentTypeId], [Total], [IsCompleted]) VALUES (2, 1, CAST(1000.0000 AS Money), 1)
 
---INSERT INTO [dbo].[OrderProduct] ([OrderId], [ProductId]) VALUES (3, 1)
---INSERT INTO [dbo].[OrderProduct] ([OrderId], [ProductId]) VALUES (4, 2)
+--INSERT INTO [dbo].[OrderProduct] ([OrderId], [ProductId]) VALUES (1, 1)
+--INSERT INTO [dbo].[OrderProduct] ([OrderId], [ProductId]) VALUES (2, 2)
 
 --INSERT INTO [dbo].[TrainingProgram] ([Name], [StartDate], [EndDate], [MaxAttendees]) VALUES ('Phishing Attacks', '2019-12-10', '2019-12-23', 20)
 --INSERT INTO [dbo].[TrainingProgram] ([Name], [StartDate], [EndDate], [MaxAttendees]) VALUES ('SQL Queries', '2019-11-11', '2019-01-06', 40)
 
---INSERT INTO [dbo].[EmployeeTraining] ([EmployeeId], [TrainingProgramId]) VALUES (2, 1)
---INSERT INTO [dbo].[EmployeeTraining] ([EmployeeId], [TrainingProgramId]) VALUES (1, 2)
+--INSERT INTO [dbo].[EmployeeTraining] ([EmployeeId], [TrainingProgramId]) VALUES (1, 1)
+--INSERT INTO [dbo].[EmployeeTraining] ([EmployeeId], [TrainingProgramId]) VALUES (2, 2)
+
