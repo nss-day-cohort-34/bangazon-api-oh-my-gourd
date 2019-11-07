@@ -9,7 +9,7 @@ namespace BangazonAPI.Models
     public class Order
     {
         public int Id { get; set; }
-        public double Total { get; set; }
+        public double? Total { get; set; }
         [Required]
         public bool IsCompleted { get; set; }
         [Required]

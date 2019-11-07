@@ -117,7 +117,7 @@ CREATE TABLE [Order] (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	CustomerId INTEGER NOT NULL,
 	PaymentTypeId INTEGER,
-	Total MONEY NOT NULL,
+	Total MONEY,
 	IsCompleted BIT NOT NULL,
     CONSTRAINT FK_Order_Customer FOREIGN KEY(CustomerId) REFERENCES Customer(Id),
     CONSTRAINT FK_Order_Payment FOREIGN KEY(PaymentTypeId) REFERENCES PaymentType(Id)

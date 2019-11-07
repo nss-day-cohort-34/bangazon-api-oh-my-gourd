@@ -49,14 +49,25 @@ namespace BangazonAPI.Controllers
                         List<Order> orders = new List<Order>();
                         while (reader.Read())
                         {
+                            double total = CalculateOrderTotal(reader.GetInt32(reader.GetOrdinal("Id")));
+
                             Order order = new Order()
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                                PaymentTypeId = !reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")) ? reader.GetInt32(reader.GetOrdinal("PaymentTypeId")) : -1,
-                                Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
-                                IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted"))
+                                IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted")),
+                                Total = total
                             };
+
+                            if (!reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")))
+                            {
+                                order.PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId"));
+                            }
+
+                            if (!reader.IsDBNull(reader.GetOrdinal("Total")))
+                            {
+                                order.Total = (double)reader.GetDecimal(reader.GetOrdinal("Total"));
+                            }
 
                             orders.Add(order);
                         }
@@ -79,17 +90,24 @@ namespace BangazonAPI.Controllers
                             int orderId = reader.GetInt32(reader.GetOrdinal("OrderId"));
                             if (!orders.ContainsKey(orderId))
                             {
+                                double total = CalculateOrderTotal(reader.GetInt32(reader.GetOrdinal("Id")));
+
                                 Order order = new Order()
                                 {
                                     Id = orderId,
                                     CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                                    Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
-                                    IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted"))
+                                    IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted")),
+                                    Total = total
                                 };
 
                                 if (!reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")))
                                 {
                                     order.PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId"));
+                                }
+
+                                if (!reader.IsDBNull(reader.GetOrdinal("Total")))
+                                {
+                                    order.Total = (double)reader.GetDecimal(reader.GetOrdinal("Total"));
                                 }
 
                                 orders.Add(orderId, order);
@@ -126,13 +144,14 @@ namespace BangazonAPI.Controllers
                         List<Order> orders = new List<Order>();
                         while (reader.Read())
                         {
+                            double total = CalculateOrderTotal(reader.GetInt32(reader.GetOrdinal("Id")));
+
                             Order order = new Order()
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("OrderId")),
                                 CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                                PaymentTypeId = !reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")) ? reader.GetInt32(reader.GetOrdinal("PaymentTypeId")) : -1,
-                                Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
                                 IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted")),
+                                Total = total,
                                 Customer = new Customer()
                                 {
                                     Id = reader.GetInt32(reader.GetOrdinal("CustomerId")),
@@ -142,6 +161,17 @@ namespace BangazonAPI.Controllers
                                     LastActiveDate = reader.GetDateTime(reader.GetOrdinal("LastActiveDate"))
                                 }
                             };
+
+                            if (!reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")))
+                            {
+                                order.PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId"));
+                            }
+
+                            if (!reader.IsDBNull(reader.GetOrdinal("Total")))
+                            {
+                                order.Total = (double)reader.GetDecimal(reader.GetOrdinal("Total"));
+                            }
+
                             orders.Add(order);
                         }
                         reader.Close();
@@ -157,14 +187,25 @@ namespace BangazonAPI.Controllers
                         List<Order> orders = new List<Order>();
                         while (reader.Read())
                         {
+                            double total = CalculateOrderTotal(reader.GetInt32(reader.GetOrdinal("Id")));
+
                             Order order = new Order()
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                 CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                                PaymentTypeId = !reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")) ? reader.GetInt32(reader.GetOrdinal("PaymentTypeId")) : -1,
-                                Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
-                                IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted"))
+                                IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted")),
+                                Total = total
                             };
+
+                            if (!reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")))
+                            {
+                                order.PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId"));
+                            }
+
+                            if (!reader.IsDBNull(reader.GetOrdinal("Total")))
+                            {
+                                order.Total = (double)reader.GetDecimal(reader.GetOrdinal("Total"));
+                            }
 
                             orders.Add(order);
                         }
@@ -202,10 +243,19 @@ namespace BangazonAPI.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                            PaymentTypeId = !reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")) ? reader.GetInt32(reader.GetOrdinal("PaymentTypeId")) : -1,
-                            Total = (double)reader.GetDecimal(reader.GetOrdinal("Total")),
                             IsCompleted = reader.GetBoolean(reader.GetOrdinal("IsCompleted"))
                         };
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("PaymentTypeId")))
+                        {
+                            anOrder.PaymentTypeId = reader.GetInt32(reader.GetOrdinal("PaymentTypeId"));
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("Total")))
+                        {
+                            anOrder.Total = (double)reader.GetDecimal(reader.GetOrdinal("Total"));
+                        }
+
                     }
 
                     reader.Close();
@@ -216,7 +266,7 @@ namespace BangazonAPI.Controllers
         }
 
         // POST api/orders
-        [HttpPost("/Post")]
+        [HttpPost("post")]
         public async Task<IActionResult> Post([FromBody] Order order)
         {
             using (SqlConnection conn = Connection)
@@ -225,13 +275,11 @@ namespace BangazonAPI.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        INSERT INTO [Order] (CustomerId, PaymentTypeId, Total, IsCompleted)
+                        INSERT INTO [Order] (CustomerId, IsCompleted)
                         OUTPUT INSERTED.Id
-                        VALUES (@customerId, @paymentTypeId, @total, @isCompleted) 
+                        VALUES (@customerId, @isCompleted) 
                     ";
                     cmd.Parameters.Add(new SqlParameter("@customerId", order.CustomerId));
-                    cmd.Parameters.Add(new SqlParameter("@paymentTypeId", order.PaymentTypeId));
-                    cmd.Parameters.Add(new SqlParameter("@total", order.Total));
                     cmd.Parameters.Add(new SqlParameter("@isCompleted", order.IsCompleted));
 
                     order.Id = (int)await cmd.ExecuteScalarAsync();
@@ -296,7 +344,7 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"DELETE FROM Order 
+                    cmd.CommandText = @"DELETE FROM [Order] 
                                         WHERE id = @id
                                         DELETE FROM OrderProduct
                                         WHERE OrderId = @id";
@@ -330,7 +378,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        [HttpPost("AddProductToOrder")]
+        [HttpPost("addproducttoorder")]
         public async Task<IActionResult> AddProductToOrder([FromBody] CustomerProduct customerProduct)
         {
 
@@ -428,6 +476,35 @@ namespace BangazonAPI.Controllers
                     newOrderProduct.Id = (int)await cmd.ExecuteScalarAsync();
 
                     return CreatedAtRoute("GetOrderProduct", new { id = newOrderProduct.Id }, newOrderProduct);
+                }
+            }
+        }
+
+        private double CalculateOrderTotal(int orderId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT op.OrderId, op.ProductId, p.Price
+                                        FROM OrderProduct op 
+                                        LEFT JOIN Product p ON p.Id = op.ProductId
+                                        WHERE op.OrderId = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", orderId));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    double total = 0;
+
+                    if (reader.Read())
+                    {
+                        while (reader.Read())
+                        {
+                            double productPrice = (double)reader.GetDecimal(reader.GetOrdinal("Total"));
+                            total += productPrice;
+                        }
+                    }
+                    return total;
                 }
             }
         }
