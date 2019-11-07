@@ -149,5 +149,67 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
+        // PUT api/customers/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Computer computer)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"
+                            UPDATE Computer
+                            SET PurchaseDate = @purchaseDate, DecomissionDate = @decommissionDate, Make = @make, Manufacturer = @manufacturer, EmployeeId = @employeeId
+                            WHERE Id = @id
+                        ";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+                        cmd.Parameters.Add(new SqlParameter("@purchaseDate", computer.PurchaseDate));
+                        cmd.Parameters.Add(new SqlParameter("@decommissionDate", computer.DecommissionDate));
+                        cmd.Parameters.Add(new SqlParameter("@make", computer.Make));
+                        cmd.Parameters.Add(new SqlParameter("@manufacturer", computer.Manufacturer));
+                        cmd.Parameters.Add(new SqlParameter("@employeeId", computer.EmployeeId));
+
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            return Ok(computer);
+                        }
+
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!ComputerExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        private bool ComputerExists(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id FROM Computer WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    return reader.Read();
+                }
+            }
+        }
     }
 }
