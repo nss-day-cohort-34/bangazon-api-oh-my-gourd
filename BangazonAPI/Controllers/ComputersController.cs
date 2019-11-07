@@ -53,11 +53,11 @@ namespace BangazonAPI.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
-                            // If the Decommission date is null in the DB, then return the date 01/01/01 because ASP.NET doesn't know how to convert null values into JSON
                             Make = reader.GetString(reader.GetOrdinal("Make")),
                             Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
                             EmployeeId = reader.GetInt32(reader.GetOrdinal("EmployeeId"))
                         };
+                        //If Decommission Date is not null then set it to the DateTime from the DB
                         if (!reader.IsDBNull(decommissionDateIndex))
                         {
                             computer.DecommissionDate = reader.GetDateTime(decommissionDateIndex);
@@ -97,11 +97,11 @@ namespace BangazonAPI.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
-                            // If the Decommission date is null in the DB, then return the date 01/01/01 because ASP.NET doesn't know how to convert null values into JSON
                             Make = reader.GetString(reader.GetOrdinal("Make")),
                             Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
                             EmployeeId = reader.GetInt32(reader.GetOrdinal("EmployeeId"))
                         };
+                        //If Decommission Date is not null then set it to the DateTime from the DB
                         if (!reader.IsDBNull(decommissionDateIndex))
                         {
                             computer.DecommissionDate = reader.GetDateTime(decommissionDateIndex);
@@ -167,7 +167,14 @@ namespace BangazonAPI.Controllers
                         ";
                         cmd.Parameters.Add(new SqlParameter("@id", id));
                         cmd.Parameters.Add(new SqlParameter("@purchaseDate", computer.PurchaseDate));
-                        cmd.Parameters.Add(new SqlParameter("@decommissionDate", computer.DecommissionDate));
+                        if (computer.DecommissionDate == null)
+                        {
+                            cmd.Parameters.Add(new SqlParameter("@decommissionDate", DBNull.Value));
+                        }
+                        else
+                        {
+                            cmd.Parameters.Add(new SqlParameter("@decommissionDate", computer.DecommissionDate));
+                        }
                         cmd.Parameters.Add(new SqlParameter("@make", computer.Make));
                         cmd.Parameters.Add(new SqlParameter("@manufacturer", computer.Manufacturer));
                         cmd.Parameters.Add(new SqlParameter("@employeeId", computer.EmployeeId));
@@ -178,12 +185,11 @@ namespace BangazonAPI.Controllers
                         {
                             return Ok(computer);
                         }
-
-                        throw new Exception("No rows affected");
+                        throw new Exception();
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (!ComputerExists(id))
                 {
@@ -191,7 +197,7 @@ namespace BangazonAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    throw ex;
                 }
             }
         }
