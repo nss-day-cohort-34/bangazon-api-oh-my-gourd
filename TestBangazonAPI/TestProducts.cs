@@ -125,7 +125,7 @@ namespace TestBangazonAPI
                 var productAsJSON = JsonConvert.SerializeObject(modifiedProduct);
 
                 var response = await client.PutAsync(
-                    "/api/products/5",
+                    "/api/products/1",
                     new StringContent(productAsJSON, Encoding.UTF8, "application/json"));
 
 
@@ -139,7 +139,7 @@ namespace TestBangazonAPI
                     Verify that the PUT operation was successful
                 */
 
-                var getProduct = await client.GetAsync("/api/products/5");
+                var getProduct = await client.GetAsync("/api/products/1");
                 getProduct.EnsureSuccessStatusCode();
 
                 string getProductBody = await getProduct.Content.ReadAsStringAsync();
