@@ -49,35 +49,45 @@ namespace BangazonAPI.Controllers
 
                     List<Employee> employees = new List<Employee>();
 
-                    while (reader.Read())
+                    try
                     {
-                        Employee employee = new Employee
+                        while (reader.Read())
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("TheEmployeeId")),
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                            DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
-                            DepartmentName = reader.GetString(reader.GetOrdinal("DepartmentName"))
-                        };
-
-                        // Check to see if the employee has a computer assigned to them
-                        if (!reader.IsDBNull(reader.GetOrdinal("ComputerId")))
-                        {
-                            employee.Computer = new Computer
+                            Employee employee = new Employee
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("ComputerId")),
-                                PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
-                                Make = reader.GetString(reader.GetOrdinal("Make")),
-                                Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
-                                IsWorking = reader.GetBoolean(reader.GetOrdinal("IsWorking"))
+                                Id = reader.GetInt32(reader.GetOrdinal("TheEmployeeId")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
+                                DepartmentName = reader.GetString(reader.GetOrdinal("DepartmentName"))
                             };
+
+                            // Check to see if the employee has a computer assigned to them
+                            if (!reader.IsDBNull(reader.GetOrdinal("ComputerId")))
+                            {
+                                employee.Computer = new Computer
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("ComputerId")),
+                                    PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
+                                    DecommissionDate = null, 
+                                    Make = reader.GetString(reader.GetOrdinal("Make")),
+                                    Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
+                                    IsWorking = reader.GetBoolean(reader.GetOrdinal("IsWorking"))
+                                };
+                            }
+
+                            employees.Add(employee);
                         }
+                        reader.Close();
 
-                        employees.Add(employee);
+                        return Ok(employees);
                     }
-                    reader.Close();
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
 
-                    return Ok(employees);
+                    
                 }
             }
         }
@@ -120,6 +130,7 @@ namespace BangazonAPI.Controllers
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("ComputerId")),
                                 PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
+                                DecommissionDate = null,
                                 Make = reader.GetString(reader.GetOrdinal("Make")),
                                 Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
                                 IsWorking = reader.GetBoolean(reader.GetOrdinal("IsWorking"))

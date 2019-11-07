@@ -25,8 +25,7 @@ namespace TestBangazonAPI
                 /*
                     ACT
                 */
-                var response = await client.GetAsync("/api/employees");
-
+                var response = await client.GetAsync("/api/employees/");
 
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var employees = JsonConvert.DeserializeObject<List<Employee>>(responseBody);
@@ -67,7 +66,7 @@ namespace TestBangazonAPI
                 {
                     FirstName = "Bill",
                     LastName = "Gates",
-                    DepartmentId = 1
+                    DepartmentId = 2
                 };
                 var employeeAsJSON = JsonConvert.SerializeObject(newEmployee);
 
