@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BangazonAPI.Controllers
 {
-    [Route("api/[controller]/{action}")]
+    [Route("api/[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
     {
@@ -326,7 +326,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        [HttpPost("{productId:int}/{customerId:int}", Name = "AddProductToOrder")]
+        [HttpPost("AddProductToOrder")]
         public async Task<IActionResult> AddProductToOrder(int productId, int customerId)
         {
             // This method could be improved with login authentication. Would not need CustomerId as a parameter
