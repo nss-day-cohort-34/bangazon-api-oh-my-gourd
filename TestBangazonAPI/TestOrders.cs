@@ -116,30 +116,30 @@ namespace TestBangazonAPI
             }
         }
 
-        //[Fact]
-        //public async Task Test_Get_One_Order()
-        //{
-        //    using (var client = new APIClientProvider().Client)
-        //    {
-        //        /*
-        //           ARRANGE
-        //       */
+        [Fact]
+        public async Task Test_Get_One_Order()
+        {
+            using (var client = new APIClientProvider().Client)
+            {
+                /*
+                   ARRANGE
+               */
 
 
-        //        /*
-        //            ACT
-        //        */
-        //        var response = await client.GetAsync("/api/orders/1");
+                /*
+                    ACT
+                */
+                var response = await client.GetAsync("/api/orders/1");
 
 
-        //        string responseBody = await response.Content.ReadAsStringAsync();
-        //        var order = JsonConvert.DeserializeObject<Order>(responseBody);
-        //        /*
-        //            ASSERT
-        //        */
-        //        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //        Assert.True(order.Id == 1);
-        //    }
-        //}
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var order = JsonConvert.DeserializeObject<Order>(responseBody);
+                /*
+                    ASSERT
+                */
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(order.Id == 1);
+            }
+        }
     }
 }
