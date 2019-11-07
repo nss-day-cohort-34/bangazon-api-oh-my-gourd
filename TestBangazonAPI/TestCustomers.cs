@@ -103,7 +103,7 @@ namespace TestBangazonAPI
                 /*
                     ACT
                 */
-                var response = await client.GetAsync("/api/customers/1");
+                var response = await client.GetAsync("/api/customers/2");
 
 
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -112,7 +112,7 @@ namespace TestBangazonAPI
                     ASSERT
                 */
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                Assert.True(customer.Id == 1);
+                Assert.True(customer.Id == 2);
             }
         }
 
