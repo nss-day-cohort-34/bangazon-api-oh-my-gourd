@@ -139,7 +139,7 @@ VALUES ('Human Resources', 500000);
 INSERT INTO EMPLOYEE (FirstName, LastName, DepartmentId, IsSupervisor) 
 VALUES ('Andy', 'Collins', 1, 1);
 INSERT INTO EMPLOYEE (FirstName, LastName, DepartmentId, IsSupervisor) 
-VALUES ('Steve', 'Brownlee', 2,2);
+VALUES ('Steve', 'Brownlee', 2,1);
 
 INSERT INTO COMPUTER (PurchaseDate, DecomissionDate, Make, Manufacturer, EmployeeId, IsWorking) 
 Values('2019-11-5',null,'MacBook Pro','Macintosh', 1, 1);
