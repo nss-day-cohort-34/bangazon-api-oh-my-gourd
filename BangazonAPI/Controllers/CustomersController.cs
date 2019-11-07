@@ -33,7 +33,7 @@ namespace BangazonAPI.Controllers
 
         // GET api/customers
         [HttpGet]
-        public async Task<IActionResult> Get(string _include, string q)
+        public async Task<IActionResult> Get(string _include, string q, string _active)
         {
             using (SqlConnection conn = Connection)
             {
@@ -148,6 +148,42 @@ namespace BangazonAPI.Controllers
                         reader.Close();
 
                         return Ok(customers);
+                    }
+                    else if (_active == "false")
+                    {
+                        // Return customers that haven't placed any orders yet
+                        cmd.CommandText = @"SELECT c.Id, c.FirstName, c.LastName, c.CreationDate, c.LastActiveDate,
+	                                            o.CustomerId
+                                            FROM Customer c LEFT JOIN [Order] o ON o.CustomerId = c.Id";
+
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        Dictionary<int, Customer> customers = new Dictionary<int, Customer>();
+
+                        while (reader.Read())
+                        {
+                            int customerId = reader.GetInt32(reader.GetOrdinal("Id"));
+
+                            // Create and add the customers if they have no orders and aren't already in the dictionary
+                            if (reader.IsDBNull(reader.GetOrdinal("CustomerId")) && !customers.ContainsKey(customerId))
+                            {
+                                Customer customer = new Customer
+                                {
+                                    Id = customerId,
+                                    FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                    LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                    CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
+                                    LastActiveDate = reader.GetDateTime(reader.GetOrdinal("LastActiveDate"))
+                                };
+                                customers.Add(customerId, customer);
+                            }
+                        }
+                        reader.Close();
+
+                        if (customers.Count() == 0)
+                        {
+                            return new ContentResult() { Content = "All customers have placed orders.", StatusCode = 404 };
+                        }
+                        return Ok(customers.Values);
                     }
                     else
                     {
