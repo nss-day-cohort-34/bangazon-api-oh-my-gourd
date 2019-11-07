@@ -4,12 +4,12 @@ GO
 IF NOT EXISTS (
     SELECT [name]
     FROM sys.databases
-    WHERE [name] = N'BangazonAPITest'
+    WHERE [name] = N'BangazonAPI'
 )
-CREATE DATABASE BangazonAPITest
+CREATE DATABASE BangazonAPI
 GO
 
-USE BangazonAPITest
+USE BangazonAPI
 GO
 
 DROP TABLE IF EXISTS OrderProduct;
