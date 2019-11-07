@@ -40,7 +40,7 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT e.Id as 'TheEmployeeId', e.FirstName, e.LastName, e.DepartmentId,
+                    cmd.CommandText = @"SELECT e.Id as 'TheEmployeeId', e.FirstName, e.LastName,        e.DepartmentId, e.IsSupervisor,
                                         d.Name as 'DepartmentName', 
                                         c.Id as 'ComputerId', c.PurchaseDate, c.Make, c.Manufacturer, c.IsWorking
                                         FROM Employee e LEFT JOIN Department d ON d.Id = e.DepartmentId
@@ -59,7 +59,8 @@ namespace BangazonAPI.Controllers
                                 FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                                 LastName = reader.GetString(reader.GetOrdinal("LastName")),
                                 DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
-                                DepartmentName = reader.GetString(reader.GetOrdinal("DepartmentName"))
+                                DepartmentName = reader.GetString(reader.GetOrdinal("DepartmentName")),
+                                IsSupervisor = reader.GetBoolean(reader.GetOrdinal("IsSupervisor"))
                             };
 
                             // Check to see if the employee has a computer assigned to them
@@ -101,7 +102,7 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT e.Id as 'TheEmployeeId', e.FirstName, e.LastName, e.DepartmentId,
+                    cmd.CommandText = @"SELECT e.Id as 'TheEmployeeId', e.FirstName, e.LastName, e.DepartmentId, e.IsSupervisor,
                                         d.Name as 'DepartmentName', 
                                         c.Id as 'ComputerId', c.PurchaseDate, c.Make, c.Manufacturer, c.IsWorking
                                         FROM Employee e LEFT JOIN Department d ON d.Id = e.DepartmentId
@@ -121,6 +122,7 @@ namespace BangazonAPI.Controllers
                             LastName = reader.GetString(reader.GetOrdinal("LastName")),
                             DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
                             DepartmentName = reader.GetString(reader.GetOrdinal("DepartmentName")),
+                            IsSupervisor = reader.GetBoolean(reader.GetOrdinal("IsSupervisor"))
                         };
 
                         // Check to see if the employee has a computer assigned to them
@@ -154,12 +156,13 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Employee (FirstName, LastName, DepartmentId)
+                    cmd.CommandText = @"INSERT INTO Employee (FirstName, LastName, DepartmentId, IsSupervisor)
                                            OUTPUT INSERTED.Id
-                                        VALUES (@firstName, @lastName, @departmentId)";
+                                        VALUES (@firstName, @lastName, @departmentId, @isSupervisor)";
                     cmd.Parameters.Add(new SqlParameter("@firstName", newEmployee.FirstName));
                     cmd.Parameters.Add(new SqlParameter("@lastName", newEmployee.LastName));
                     cmd.Parameters.Add(new SqlParameter("@departmentId", newEmployee.DepartmentId));
+                    cmd.Parameters.Add(new SqlParameter("@isSupervisor", newEmployee.IsSupervisor));
 
                     newEmployee.Id = (int)await cmd.ExecuteScalarAsync();
                     return CreatedAtRoute("GetEmployee", new { id = newEmployee.Id }, newEmployee);

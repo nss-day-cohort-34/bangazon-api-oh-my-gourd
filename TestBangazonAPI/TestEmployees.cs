@@ -66,7 +66,8 @@ namespace TestBangazonAPI
                 {
                     FirstName = "Bill",
                     LastName = "Gates",
-                    DepartmentId = 2
+                    DepartmentId = 1,
+                    IsSupervisor = false
                 };
                 var employeeAsJSON = JsonConvert.SerializeObject(newEmployee);
 
@@ -99,7 +100,8 @@ namespace TestBangazonAPI
                 {
                     FirstName = newFirstName,
                     LastName = "Collins",
-                    DepartmentId = 4
+                    DepartmentId = 1,
+                    IsSupervisor = true
                 };
                 var employeeAsJSON = JsonConvert.SerializeObject(modifiedEmployee);
 
