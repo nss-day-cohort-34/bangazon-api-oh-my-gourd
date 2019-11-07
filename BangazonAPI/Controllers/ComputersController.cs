@@ -54,11 +54,14 @@ namespace BangazonAPI.Controllers
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
                             // If the Decommission date is null in the DB, then return the date 01/01/01 because ASP.NET doesn't know how to convert null values into JSON
-                            DecommissionDate = reader.IsDBNull(decommissionDateIndex) ? new DateTime(1, 1, 1) : reader.GetDateTime(reader.GetOrdinal("DecomissionDate")),
                             Make = reader.GetString(reader.GetOrdinal("Make")),
                             Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
                             EmployeeId = reader.GetInt32(reader.GetOrdinal("EmployeeId"))
                         };
+                        if (!reader.IsDBNull(decommissionDateIndex))
+                        {
+                            computer.DecommissionDate = reader.GetDateTime(decommissionDateIndex);
+                        } 
 
                         computers.Add(computer);
                     }
@@ -95,11 +98,14 @@ namespace BangazonAPI.Controllers
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
                             // If the Decommission date is null in the DB, then return the date 01/01/01 because ASP.NET doesn't know how to convert null values into JSON
-                            DecommissionDate = reader.IsDBNull(decommissionDateIndex) ? new DateTime(1, 1, 1) : reader.GetDateTime(reader.GetOrdinal("DecomissionDate")),
                             Make = reader.GetString(reader.GetOrdinal("Make")),
                             Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
                             EmployeeId = reader.GetInt32(reader.GetOrdinal("EmployeeId"))
                         };
+                        if (!reader.IsDBNull(decommissionDateIndex))
+                        {
+                            computer.DecommissionDate = reader.GetDateTime(decommissionDateIndex);
+                        }
                     }
 
                     reader.Close();
