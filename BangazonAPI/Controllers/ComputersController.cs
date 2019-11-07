@@ -54,7 +54,7 @@ namespace BangazonAPI.Controllers
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
                             // If the Decommission date is null in the DB, then return the date 01/01/01 because ASP.NET doesn't know how to convert null values into JSON
-                            DecommissionDate = reader.IsDBNull(decommissionDateIndex) ? new DateTime(1,1,1) : reader.GetDateTime(reader.GetOrdinal("DecomissionDate")),
+                            DecommissionDate = reader.IsDBNull(decommissionDateIndex) ? new DateTime(1, 1, 1) : reader.GetDateTime(reader.GetOrdinal("DecomissionDate")),
                             Make = reader.GetString(reader.GetOrdinal("Make")),
                             Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
                             EmployeeId = reader.GetInt32(reader.GetOrdinal("EmployeeId"))
@@ -105,6 +105,41 @@ namespace BangazonAPI.Controllers
                     reader.Close();
 
                     return Ok(computer);
+                }
+            }
+        }
+        // POST api/computers
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Computer computer)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    // More string interpolation
+                    cmd.CommandText = @"
+                        INSERT INTO Computer (PurchaseDate, DecomissionDate, Make, Manufacturer, EmployeeId, IsWorking)
+                        OUTPUT INSERTED.Id
+                        VALUES (@purchaseDate, @decommissionDate, @make, @manufacturer, @employeeId, @IsWorking)
+                    ";
+                    cmd.Parameters.Add(new SqlParameter("@purchaseDate", computer.PurchaseDate));
+                    if (computer.DecommissionDate == null)
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@decommissionDate", DBNull.Value));
+                    }
+                    else
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@decommissionDate", computer.DecommissionDate));
+                    }
+                    cmd.Parameters.Add(new SqlParameter("@make", computer.Make));
+                    cmd.Parameters.Add(new SqlParameter("@manufacturer", computer.Manufacturer));
+                    cmd.Parameters.Add(new SqlParameter("@employeeId", computer.EmployeeId));
+                    cmd.Parameters.Add(new SqlParameter("@isWorking", computer.IsWorking));
+
+                    computer.Id = (int)await cmd.ExecuteScalarAsync();
+
+                    return CreatedAtRoute("GetCustomer", new { id = computer.Id }, computer);
                 }
             }
         }
