@@ -4,9 +4,9 @@
 --VALUES ('Human Resources', 500000, null);
 
 --INSERT INTO EMPLOYEE (FirstName, LastName, DepartmentId) 
---VALUES ('Andy', 'Collins', 1);
+--VALUES ('Andy', 'Collins', 2);
 --INSERT INTO EMPLOYEE (FirstName, LastName, DepartmentId) 
---VALUES ('Steve', 'Brownlee', 4);
+--VALUES ('Steve', 'Brownlee', 3);
 
 --INSERT INTO COMPUTER (PurchaseDate, DecomissionDate, Make, Manufacturer, EmployeeId, IsWorking) 
 --Values('2019-11-5',null,'MacBook Pro','Macintosh', 1, 1);
@@ -42,3 +42,4 @@
 
 --INSERT INTO [dbo].[EmployeeTraining] ([EmployeeId], [TrainingProgramId]) VALUES (1, 1)
 --INSERT INTO [dbo].[EmployeeTraining] ([EmployeeId], [TrainingProgramId]) VALUES (2, 2)
+
