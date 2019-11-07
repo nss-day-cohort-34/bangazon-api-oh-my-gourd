@@ -69,14 +69,9 @@ namespace TestBangazonAPI
         {
             using (var client = new APIClientProvider().Client)
             {
-                /*
-                    ARRANGE
-                */
+                // ARRANGE
 
-
-                /*
-                    ACT
-                */
+                // ACT
                 var response = await client.GetAsync("/api/customers?_active=false");
 
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -87,15 +82,11 @@ namespace TestBangazonAPI
                     customers = JsonConvert.DeserializeObject<List<Customer>>(responseBody);
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 }
-                /*
-                    ASSERT
-                */
-                //Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+                // ASSERT
                 Assert.True(customers.Count > 0 || responseBody == "All customers have placed orders.");
             }
         }
-
-
 
         [Fact]
         public async Task Test_Get_All_Customers_And_Payments()
