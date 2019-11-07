@@ -327,14 +327,16 @@ namespace BangazonAPI.Controllers
         }
 
         [HttpPost("AddProductToOrder")]
-        public async Task<IActionResult> AddProductToOrder(int productId, int customerId)
+        public async Task<IActionResult> AddProductToOrder(CustomerProduct customerProduct)
         {
             // This method could be improved with login authentication. Would not need CustomerId as a parameter
 
             // call private method that determines whether the customer has an open order - return orderId 
-            if (GetCurrentCustomerOrderId(customerId) > 0)
+            int orderId = GetCurrentCustomerOrderId(customerProduct.CustomerId);
+            if (orderId > 0)
             {
             // if orderId exists, then post to OrderProduct
+
                 return Ok();
             }
             else
@@ -362,7 +364,6 @@ namespace BangazonAPI.Controllers
                     {
                        orderId = reader.GetInt32(reader.GetOrdinal("Id"));
                        return orderId;
-
                     }
 
                     return orderId;
