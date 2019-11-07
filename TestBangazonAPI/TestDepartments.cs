@@ -102,8 +102,7 @@ namespace TestBangazonAPI
                 Department newDepartment = new Department()
                 {
                     Name = "Sales",
-                    Budget = 1500000,
-                    SupervisorId = 2
+                    Budget = 1500000
                 };
                 var departmentAsJSON = JsonConvert.SerializeObject(newDepartment);
 
@@ -132,20 +131,25 @@ namespace TestBangazonAPI
         {
             using (var client = new APIClientProvider().Client)
             {
+
+                var getAllResponse = await client.GetAsync("/api/departments?_include=employees");
+
+
+                string getAllResponseBody = await getAllResponse.Content.ReadAsStringAsync();
+                var departments = JsonConvert.DeserializeObject<List<Department>>(getAllResponseBody);
                 /*
                     PUT section
                 */
-                int newSupervisorId = 3;
+                decimal newBudget = 1200000;
                 Department modifiedDepartment = new Department()
                 {
                     Name = "C#",
-                    Budget = 1000000,
-                    SupervisorId = newSupervisorId
+                    Budget = newBudget
                 };
                 var departmentAsJSON = JsonConvert.SerializeObject(modifiedDepartment);
 
                 var response = await client.PutAsync(
-                    "/api/departments/3",
+                    $"/api/departments/{departments[0].Id}",
                     new StringContent(departmentAsJSON, Encoding.UTF8, "application/json"));
 
 
@@ -159,14 +163,14 @@ namespace TestBangazonAPI
                     Verify that the PUT operation was successful
                 */
 
-                var getDepartment = await client.GetAsync("/api/departments/3");
+                var getDepartment = await client.GetAsync("/api/departments/2");
                 getDepartment.EnsureSuccessStatusCode();
 
                 string getDepartmentBody = await getDepartment.Content.ReadAsStringAsync();
                 Department newDepartment = JsonConvert.DeserializeObject<Department>(getDepartmentBody);
 
                 Assert.Equal(HttpStatusCode.OK, getDepartment.StatusCode);
-                Assert.Equal(modifiedDepartment.SupervisorId, newDepartment.SupervisorId);
+                Assert.Equal(modifiedDepartment.Budget, newDepartment.Budget);
             }
         }
 
