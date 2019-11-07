@@ -120,7 +120,7 @@ namespace BangazonAPI.Controllers
 										on c.EmployeeId = e.id";
                         SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
-                         Dictionary<int, TrainingProgram> trainingPrograms = new Dictionary<int, TrainingProgram>();
+                        Dictionary<int, TrainingProgram> trainingPrograms = new Dictionary<int, TrainingProgram>();
                         while (reader.Read())
                         {
                             int trainingProgramId = reader.GetInt32(reader.GetOrdinal("TPID"));
@@ -252,7 +252,7 @@ namespace BangazonAPI.Controllers
                     }
                     reader.Close();
 
-                        return Ok(trainingPrograms.Values);
+                    return Ok(trainingPrograms.Values);
                 }
             }
 
@@ -339,11 +339,25 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"Select et.TrainingProgramId from EmployeeTraining et where et.TrainingProgramId = @id";
+                    cmd.CommandText = @"Select Count(et.EmployeeId) as EmployeesEnrolled, tp.id, tp.Name from TrainingProgram tp 
+                                        left join EmployeeTraining et on tp.Id = et.TrainingProgramId 
+                                        Group By tp.Id, tp.StartDate, tp.Name
+                                        having tp.Id = @id and tp.StartDate > @dateTime and Count(et.EmployeeId) = 0";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
+                    DateTime currentDateTime = DateTime.Now;
+                    cmd.Parameters.Add(new SqlParameter("@dateTime", currentDateTime));
                     SqlDataReader reader = await cmd.ExecuteReaderAsync();
 
                     if (reader.Read())
+                    {
+                        reader.Close();
+                        cmd.CommandText = @"DELETE FROM TrainingProgram
+                                        WHERE id = @id
+                                       ";
+                        cmd.ExecuteNonQuery();
+                        return Ok($"Deleted item at index {id}");
+                    }
+                    else
                     {
                         reader.Close();
                         return new ContentResult() { Content = @"Error 418: I'm a teapot.             
@@ -353,15 +367,6 @@ namespace BangazonAPI.Controllers
                                                             ((j`===== ',-'
                                                              `-\     /
                                                                 `-= -'     ", StatusCode = 418 };
-                    }
-                    else
-                    {
-                        reader.Close();
-                        cmd.CommandText = @"DELETE FROM TrainingProgram
-                                        WHERE id = @id
-                                       ";
-                        cmd.ExecuteNonQuery();
-                        return Ok($"Deleted item at index {id}");
                     }
 
                 }
