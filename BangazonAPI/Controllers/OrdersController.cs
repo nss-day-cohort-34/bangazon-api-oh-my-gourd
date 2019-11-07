@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BangazonAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/{action}")]
     [ApiController]
     public class OrdersController : ControllerBase
     {
@@ -212,7 +212,7 @@ namespace BangazonAPI.Controllers
         }
 
         // POST api/orders
-        [HttpPost]
+        [HttpPost("/Post")]
         public async Task<IActionResult> Post([FromBody] Order order)
         {
             using (SqlConnection conn = Connection)
@@ -322,6 +322,50 @@ namespace BangazonAPI.Controllers
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     return reader.Read();
+                }
+            }
+        }
+
+        [HttpPost("{productId:int}/{customerId:int}", Name = "AddProductToOrder")]
+        public async Task<IActionResult> AddProductToOrder(int productId, int customerId)
+        {
+            // This method could be improved with login authentication. Would not need CustomerId as a parameter
+
+            // call private method that determines whether the customer has an open order - return orderId 
+            if (GetCurrentCustomerOrderId(customerId) > 0)
+            {
+            // if orderId exists, then post to OrderProduct
+                return Ok();
+            }
+            else
+            {
+            // if orderId is null, then create order and post to OrderProduct
+                return Ok();
+            }
+        }
+
+        private int GetCurrentCustomerOrderId(int customerId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id FROM [Order] WHERE CustomerId = @id AND IsCompleted = 0";
+                    cmd.Parameters.Add(new SqlParameter("@id", customerId));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    int orderId = -1;
+
+                    if (reader.Read())
+                    {
+                       orderId = reader.GetInt32(reader.GetOrdinal("Id"));
+                       return orderId;
+
+                    }
+
+                    return orderId;
                 }
             }
         }
