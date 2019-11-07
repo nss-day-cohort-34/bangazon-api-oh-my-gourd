@@ -163,7 +163,7 @@ namespace TestBangazonAPI
                     Verify that the PUT operation was successful
                 */
 
-                var getDepartment = await client.GetAsync("/api/departments/2");
+                var getDepartment = await client.GetAsync($"/api/departments/{departments[0].Id}");
                 getDepartment.EnsureSuccessStatusCode();
 
                 string getDepartmentBody = await getDepartment.Content.ReadAsStringAsync();
