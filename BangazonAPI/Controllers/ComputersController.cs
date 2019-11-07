@@ -61,7 +61,7 @@ namespace BangazonAPI.Controllers
                         if (!reader.IsDBNull(decommissionDateIndex))
                         {
                             computer.DecommissionDate = reader.GetDateTime(decommissionDateIndex);
-                        } 
+                        }
 
                         computers.Add(computer);
                     }
@@ -192,6 +192,26 @@ namespace BangazonAPI.Controllers
                 else
                 {
                     throw;
+                }
+            }
+        }
+
+        // DELETE api/computers/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+
+                    cmd.CommandText = @"DELETE FROM Computer
+                                        WHERE id = @id
+                                       ";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    cmd.ExecuteNonQuery();
+                    return Ok($"Deleted item at index {id}");
                 }
             }
         }
