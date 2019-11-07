@@ -158,6 +158,12 @@ namespace TestBangazonAPI
         {
             using (var client = new APIClientProvider().Client)
             {
+
+                var getAllResponse = await client.GetAsync("/api/customers");
+
+
+                string getAllResponseBody = await getAllResponse.Content.ReadAsStringAsync();
+                var customers = JsonConvert.DeserializeObject<List<Customer>>(getAllResponseBody);
                 /*
                     PUT section
                 */
@@ -172,7 +178,7 @@ namespace TestBangazonAPI
                 var customerAsJSON = JsonConvert.SerializeObject(modifiedCustomer);
 
                 var response = await client.PutAsync(
-                    "/api/customers/5",
+                    $"/api/customers/{customers[0].Id}",
                     new StringContent(customerAsJSON, Encoding.UTF8, "application/json"));
 
 
@@ -186,7 +192,7 @@ namespace TestBangazonAPI
                     Verify that the PUT operation was successful
                 */
 
-                var getCustomer= await client.GetAsync("/api/customers/5");
+                var getCustomer= await client.GetAsync($"/api/customers/{customers[0].Id}");
                 getCustomer.EnsureSuccessStatusCode();
 
                 string getCustomerBody = await getCustomer.Content.ReadAsStringAsync();
